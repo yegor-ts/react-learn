@@ -1,0 +1,8 @@
+{
+  "name": "John Doe",
+  "biography": "John Doe was born in August 4308 in a small city on the coast of the sea. He got acquainted with programming in high school, the first programming language was Java. Already at the university He was programming in JavaScript and three years later He got into React development courses.",
+  "contacts": {
+    "phone": "+1234567890",
+    "email": "john.doe@mail.com"
+  }
+}
