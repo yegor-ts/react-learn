@@ -3,31 +3,22 @@ import "./App.css";
 
 import personData from "./person.json";
 
-interface PersonProps {
-  name: string;
-  biography: string;
-  contacts: {
-    phone: string;
-    email: string;
-  };
-}
-
-const Person: React.FC<PersonProps> = ({ name, biography, contacts }) => (
-  <ol>
-    <li><b>Name:</b> {name}</li>
-    <li><b>Biography:</b> {biography}</li>
-    <li><b>Phone:</b> {contacts.phone}</li>
-    <li><b>Email:</b> {contacts.email}</li>
-  </ol>
-);
+import Header from "./components/Header/index";
+import Bio from "./components/Bio/index";
+import Footer from "./components/Footer/index";
 
 function App() {
   return (
     <div className="App">
-      <Person
+      <Header options={["Home", "Feed", "Personal account", "Log out"]} />
+      <Bio
         name={personData.name}
         biography={personData.biography}
         contacts={personData.contacts}
+      />
+      <Footer
+        socials={["instagram", "twitter", "facebook"]}
+        services={["New Feature", "About", "Downloads"]}
       />
     </div>
   );
