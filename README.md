@@ -1,5 +1,13 @@
 # React component
 
+## Overview
+- [Component Introduction](#what-is-component)
+- [Types of components](#component-types)
+- [Props or how we can pass data to components](#how-to-pass-data-into-the-component)
+- [Hoisting data from components](#how-to-get-data-from-the-component)
+- [Component Lifecycle](#component-lifecycle)
+- [Useful links](#useful-links)
+
 ## What is component?
 In general, **component** is an independent unit of code that encapsulate single, logical functionality.
 
@@ -44,7 +52,7 @@ class App extends PureComponent {
   }
 }
 ```
-If our component extends *PureComponent* it means that component will only be re-rendered if props change.
+If our component extends *PureComponent* it means that component will only be re-rendered if props change, unlike a Component-class, which will be re-rendered every time.
 
 ```tsx
 import { Component } from 'React';
@@ -107,7 +115,7 @@ We can pass to props anything we want:
 ```typescript
 interface Props {
     userName: string;             // string
-    userAge: number;              //number
+    userAge: number;              // number
     isAdmin: boolean;             // boolean
     badges: string[];             // array
     contacts: { email: string };  // object
