@@ -1,184 +1,229 @@
-# React component
+# React hooks
 
 ## Overview
-- [Component Introduction](#what-is-component)
-- [Types of components](#component-types)
-- [Props or how we can pass data to components](#how-to-pass-data-into-the-component)
-- [Hoisting data from components](#how-to-get-data-from-the-component)
-- [Component Lifecycle](#component-lifecycle)
+
+- [Hook introduction](#what-is-hook)
+- [Hook rules](#hook-rules)
+- [Most useful hooks](#most-useful-hooks)
+    - [useState()](#usestate)
+    - [useEffect()](#useeffect)
+    - [useContext()](#usecontext)
+    - [useCallback()](#usecallback)
+    - [Custom hook](#custom-hooks)
 - [Useful links](#useful-links)
 
-## What is component?
-In general, **component** is an independent unit of code that encapsulate single, logical functionality.
+## What is hook?
 
-But in *React*, component is a function or class that accepts *props* and returns *JSX*.
+**Hook** is just a function, that:
+- Starts with *use*.
+- Lives only inside functional components or other hook.
 
-### But why we should use components?
-1. **Reusing!** Components are very useful for re-using logic or styles. Create one component and use it across all over the application.
+Hook extends functionality of functional components. Hooks allows you to have *state*, hook into lifecycle, share functionality.
 
-Reusing gives us:
-- Less mistakes
-- Speed up the coding
-- Better maintainability
+**Pros:**
+- Extends functional component functionality.
+- Very nice way to share common logic.
 
-2. **Encapsulation.** Components hide complexity and the realization to make you deal with them as easy as possible.
+**Cons:**
+- Might become extremely messy.
 
-Encapsulation gives us:
-- Much more easier maintenance
-- Better developer experience
-3. **Tesing.** It's much more easier to test a single, small component which has one or few resposibilities that the
-whole App Components are great for testing which increase maintability. Easier tests = less bugs and fragility.
+⚠️ ***We can't use hooks in if statements and inside loops***
 
-## Component Types
-1. Functional Components
+## Hook rules
 
-```tsx
-const App = () => (<h1>Hello, World!</h1>);
-```
+1. Name hook with **use**:
+    1. useState();
+    2. useCallback();
+    3. useCustomHook();
+2. Use hook only inside functional component or other hook.
+3. Don't use conditionally or in loops.
 
-```tsx
-function App() {
-  return <h1>Hello world</h1>;
-}
-```
-1. Class-based Components
+## Most useful hooks
+
+### useState()
+
+useState allows us to have smart functional components:
 
 ```tsx
-import { PureComponent } from 'React';
- 
-class App extends PureComponent {
-  render() {
-    return <h1>Hello world</h1>;
-  }
-}
+const App = () => {
+  const [state, setCounter] = useState(0);
+  return (
+    <button onClick={() => setCounter(state + 1)}>
+      Increment: {state}
+    </button>
+  );
+};
 ```
-If our component extends *PureComponent* it means that component will only be re-rendered if props change, unlike a Component-class, which will be re-rendered every time.
+⚠️ **Dont mutate the state! Important for this hook!**
 
 ```tsx
-import { Component } from 'React';
+const WrongApp = () => {
+  const [state, setState] = useState({ isAdmin: false });
  
-class App extends Component {
-  render() {
-    return <h1>Hello world</h1>;
-  }
-}
-```
-
-### What's the difference between FC and Class-based component?
-- **Nature:** function vs class.
-- **The way we access state:** useState() vs this.setState()
-- **LifeCycle hooks** - some of the are not accessible for the FC.
-
-### "Dumb" and "Smart" components
-
-```tsx
-export const AppGreetings = () => (
-  <h1 className="header header1">I am a nice header</h1>
-);
-```
-**Dumb components:** no state inside, made only for being nice.
-
-**Smart components** - contains the state, contains the logic.
-
-## How to pass data into the component
-- From *props* - should be preferred.
-- From *context*.
-- Directly from the code.
-
-Using *props* - the most correct:
-```tsx
-import { FC } from "react";
+  const assignAdmin = () => {
+    state.isAdmin = true; // WRONG
+    setState(state);
+  };
  
-interface H1Props { 
-    userName: string; 
-}
- 
-const AppH1: FC<H1Props> = (props) => (
-  <h1>Hello {props.userName}</h1>
-);
- 
-export default () => <AppH1 userName="Hello world" />
-```
-Same way it works with class-based component:
-```tsx
-import { PureComponent } from "react";
- 
-type Props = { text: string };
-class AppH1 extends PureComponent<Props> {
-  render() {
-    return <h1>{this.props.text}</h1>;
-  }
-}
-```
-
-We can pass to props anything we want:
-```typescript
-interface Props {
-    userName: string;             // string
-    userAge: number;              // number
-    isAdmin: boolean;             // boolean
-    badges: string[];             // array
-    contacts: { email: string };  // object
-    callback: ()=> void           // function
-    icon: JSX.Element;            // Even another element
-}
-```
-There is a simplier way to pass single component:
-```tsx
-import { FC, PropsWithChildren } from "react";
- 
-type Props = PropsWithChildren<{}>;
- 
-export const AppH1: FC<Props> = (props) => {
-  return <h1 className="header header1">{props.children}</h1>;
+  return <button onClick={assignAdmin}>Assign admin</button>;
 };
 ```
 
-## How to get data from the component
+**So we need to create a new instance of object instead:**n
 
-Callback - the best option to get data from the component:
 ```tsx
-import { FC } from "react";
+const WrongApp = () => {
+  const [state, setState] = useState({ isAdmin: false });
  
-type BtnProps = { 
-  onClick: (val: string) => void 
+  const assignAdmin = () => {
+    setState({ ...state, isAdmin: true }); // CORRECT
+  };
+ 
+  return <button onClick={assignAdmin}>Assign admin</button>;
 };
- 
-const Btn: FC<BtnProps> = (props) => (
-  <button onClick={() => props.onClick("hello!")} />
-);
- 
-<Btn onClick={(v) => alert(v)} />
 ```
 
-## Component Lifecycle
+### useEffect()
 
-React calls our components starting with the root component and so on until it runs out of child components. It creates a tree of component nodes. After that, react displays this structure in html. So our components have a life cycle.
+useEffect allows us to hook into component's lifecycle.
 
-                                               Lifecycle Phases:
-                    Class-based                                             Functional
-                - Initialization                                        - _
-            (when contructor function is called)
-                - Render                                                - function()
-            (when render function is called)
-                - ComponentDidMount                                     - useEffect(, [])
-            (when component is already displayed)
-                - ShouldComponentUpdate                                 - _
-            (checks if we should re-render our component)
-                - Render                                                - function()
-                - ComponentDidUpdate                                    - useEffect()
-                - ComponentDidCatch                                     - _
-            (when we caught an exception)
-                - ComponentWillUnmount                                  - useEffect
-            (when our component is going to be removed)
-            
-### Most useful are
-- ComponentDidMount - for one time action like fetching the server.
-- ComponentDidUpdate - for side effect.
-- ComponentWillUnmount - for cleanup.
+**Component did update:**
 
-## Useful Links
-- [Documentation Article](https://reactjs.org/docs/react-component.html)
-- [Smart VS Dumb components](https://medium.com/@thejasonfile/dumb-components-and-smart-components-e7b33a698d43)
-- [Component LifeCycle](https://www.freecodecamp.org/news/how-to-understand-a-components-lifecycle-methods-in-reactjs-e1a609840630)
-- [Component LifeCycle Diagram](https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/)
+For *debugging*, *logging* or *measuring*:
+
+```tsx
+useEffect(() => console.log("component invoked"));
+```
+
+**Component did mount:**
+
+*Calls to the server, initialization*:
+
+```tsx
+useEffect(()=> {console.log('one time action')}, []);
+```
+
+**Component did update and dependebcy changed:**
+
+*Recall when the value changed*:
+
+```tsx
+useEffect(() => console.log("component invoked"), [dependency]);
+```
+
+**Component will unmount:**
+
+*Cleanup the resources like timers or pending requests*:
+
+```tsx
+useEffect(() => {
+    ... // logic
+    return ()=> console.log('cleaning ...');
+});
+```
+
+### useContext()
+
+useContext allows us easily access the context.
+
+**1. Create context first:**
+
+```tsx
+import { createContext } from "react";
+ 
+const defaultValue = { name: "Yegor", isAdmin: true };
+const UserCtx = createContext(defaultValue)
+```
+
+**2. Provide context into react application:**
+
+```tsx
+const App = () => {
+  return (
+    <UserCtx.Provider value={defaultValue}>
+      <h1>This is my app</h1>
+      <AboutUser />
+    </UserCtx.Provider>
+  );
+};
+```
+
+**3. useContext from any functional component:**
+
+```tsx
+const AboutUser = () => {
+  const { name, isAdmin } = useContext(UserCtx);
+  return (
+    <div>
+      UserName: {name}, isAdmin: {isAdmin}
+    </div>
+  );
+};
+```
+
+### useCallback()
+
+useCallback returns the same function unless dependecies is changed.
+
+**For example:**
+
+```tsx
+type WithCallback = { callback: () => void };
+ 
+class ExpensiveComponent extends PureComponent<WithCallback> {
+  render() { return <div>Expensive</div>; }
+  componentDidUpdate() { console.log("updated"); }
+}
+```
+
+**The issue:**
+
+```tsx
+const App = () => {
+  const [state, setState] = useState(0);
+  const callback = ()=> {};
+  return (
+    <>
+      <ExpensiveComponent callback={callback} />
+      <button onClick={() => setState(state + 1)}>
+        Increment: {state}
+      </button>
+    </>
+  );
+};
+```
+
+**The solution:**
+
+```tsx
+const callback = useCallback(() => {}, []);
+```
+
+### Custom hooks
+
+**Simplify interface and hide the logic inside a hook:**
+
+```tsx
+const useCounter = (defaultValue: number) => {
+  const [state, setState] = useState(defaultValue);
+  const increment = useCallback(
+    () => setState(state + 1), 
+    [state]);
+  return { state, increment };
+};
+```
+
+**Usage is the same but easier:**
+
+```tsx
+const App = () => {
+  const { state, increment } = useCounter(0);
+  return (
+      <button onClick={increment}>Increment: {state}</button>
+  );
+};
+```
+
+## Useful links
+
+- [Useful react hooks](https://www.smashingmagazine.com/2021/11/useful-react-hooks/)
