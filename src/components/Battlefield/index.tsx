@@ -1,3 +1,5 @@
+import styles from "./Battlefield.module.css";
+
 interface CellProps {
   value: number;
   handleClick: (x: number, y: number) => void;
@@ -9,7 +11,7 @@ const cellState = ["", "", "🌊", "🚢💥"];
 
 const Cell = ({ handleClick, value, x, y }: CellProps) => {
   return (
-    <button className={"cell"} onClick={() => handleClick(x, y)}>
+    <button className={styles.cell} onClick={() => handleClick(x, y)}>
       {cellState[value]}
     </button>
   );
@@ -22,9 +24,9 @@ interface BattlefieldProps {
 
 const Battlefield = ({ matrix, onFire }: BattlefieldProps) => {
   return (
-    <div className={"container"}>
+    <div>
       {matrix.map((row, i) => (
-        <div className={"row"} key={i}>
+        <div className={styles.row} key={i}>
           {row.map((value, index) => (
             <Cell
               key={`${i}${index}`}

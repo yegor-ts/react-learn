@@ -1,6 +1,8 @@
+import styles from "./ResetButton.module.css";
+
 const ResetButton = ({ clear }: { clear: () => void }) => {
   return (
-    <button className={"reset"} type="button" onClick={clear}>
+    <button className={styles.reset} type="button" onClick={clear}>
       Reset
     </button>
   );

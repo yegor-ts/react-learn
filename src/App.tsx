@@ -3,7 +3,7 @@ import HeaderWithCounter from "./components/HeaderWithCounter";
 import ResetButton from "./components/ResetButton";
 import { useGameState } from "./state/useGameState";
 
-import "./App.css";
+import styles from "./App.module.css";
 
 const App = () => {
   const { attempt, clear, matrix, fire, won } = useGameState();
@@ -11,7 +11,7 @@ const App = () => {
   if (won) alert("MOSCOW DOWN!");
 
   return (
-    <div className="app">
+    <div className={styles.app}>
       <HeaderWithCounter attempt={attempt} />
       <Battlefield matrix={matrix} onFire={fire} />
       <ResetButton clear={clear} />

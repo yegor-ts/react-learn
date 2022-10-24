@@ -1,32 +1,3 @@
-.app {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.row {
-  display: flex;
-}
-
-.disabled {
-  opacity: 0.4;
-}
-
-.cell {
-  border: 1px solid #fefefe;
-  cursor: pointer;
-  background-color: skyblue;
-  min-height: 4em;
-  min-width: 4em;
-}
-
-.cell:hover,
-.cell:focus {
-  border-color: rgba(0, 0, 0, 0.15);
-  box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
-  color: rgba(0, 0, 0, 0.65);
-}
-
 .reset {
   align-items: center;
   background-color: #FFFFFF;
