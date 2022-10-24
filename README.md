@@ -69,7 +69,7 @@ const WrongApp = () => {
 };
 ```
 
-**So we need to create a new instance of object instead:**n
+**So we need to create a new instance of object instead:**
 
 ```tsx
 const WrongApp = () => {
