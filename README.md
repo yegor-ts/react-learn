@@ -1,229 +1,154 @@
-# React hooks
+# React styles
 
 ## Overview
-
-- [Hook introduction](#what-is-hook)
-- [Hook rules](#hook-rules)
-- [Most useful hooks](#most-useful-hooks)
-    - [useState()](#usestate)
-    - [useEffect()](#useeffect)
-    - [useContext()](#usecontext)
-    - [useCallback()](#usecallback)
-    - [Custom hook](#custom-hooks)
+- [Default way](#default-way)
+- [CSS Modules](#css-modules)
+- [Preprocessors](#preprocessors)
+- [CSS in JS](#css-in-js)
+- [What to pick?](#what-to-pick)
 - [Useful links](#useful-links)
 
-## What is hook?
+## Default way
 
-**Hook** is just a function, that:
-- Starts with *use*.
-- Lives only inside functional components or other hook.
+**Just a css:**
 
-Hook extends functionality of functional components. Hooks allows you to have *state*, hook into lifecycle, share functionality.
+```tsx
+import "./index.css";
+const App = () => (
+    <div className="App">My app</div>
+)
+```
 
 **Pros:**
-- Extends functional component functionality.
-- Very nice way to share common logic.
+
+- Simple to read - regular CSS.
+- Simple to use - regular CSS.
+- No extra efforts - works out of the box.
 
 **Cons:**
-- Might become extremely messy.
 
-⚠️ ***We can't use hooks in if statements and inside loops***
+- Name conflicts:
 
-## Hook rules
-
-1. Name hook with **use**:
-    1. useState();
-    2. useCallback();
-    3. useCustomHook();
-2. Use hook only inside functional component or other hook.
-3. Don't use conditionally or in loops.
-
-## Most useful hooks
-
-### useState()
-
-useState allows us to have smart functional components:
-
-```tsx
-const App = () => {
-  const [state, setCounter] = useState(0);
-  return (
-    <button onClick={() => setCounter(state + 1)}>
-      Increment: {state}
-    </button>
-  );
-};
+```css
+// App.css
+.root { padding-top: 1em; }
+// Card.css
+.root { padding-top: 2em; }
+// Result
+.root { padding-top: ??; }
 ```
-⚠️ **Dont mutate the state! Important for this hook!**
 
-```tsx
-const WrongApp = () => {
-  const [state, setState] = useState({ isAdmin: false });
+- Hard to reuse:
+
+```css
+.input:focus {
+    outline: 1px solid brown;
+}
  
-  const assignAdmin = () => {
-    state.isAdmin = true; // WRONG
-    setState(state);
-  };
- 
-  return <button onClick={assignAdmin}>Assign admin</button>;
-};
-```
-
-**So we need to create a new instance of object instead:**n
-
-```tsx
-const WrongApp = () => {
-  const [state, setState] = useState({ isAdmin: false });
- 
-  const assignAdmin = () => {
-    setState({ ...state, isAdmin: true }); // CORRECT
-  };
- 
-  return <button onClick={assignAdmin}>Assign admin</button>;
-};
-```
-
-### useEffect()
-
-useEffect allows us to hook into component's lifecycle.
-
-**Component did update:**
-
-For *debugging*, *logging* or *measuring*:
-
-```tsx
-useEffect(() => console.log("component invoked"));
-```
-
-**Component did mount:**
-
-*Calls to the server, initialization*:
-
-```tsx
-useEffect(()=> {console.log('one time action')}, []);
-```
-
-**Component did update and dependebcy changed:**
-
-*Recall when the value changed*:
-
-```tsx
-useEffect(() => console.log("component invoked"), [dependency]);
-```
-
-**Component will unmount:**
-
-*Cleanup the resources like timers or pending requests*:
-
-```tsx
-useEffect(() => {
-    ... // logic
-    return ()=> console.log('cleaning ...');
-});
-```
-
-### useContext()
-
-useContext allows us easily access the context.
-
-**1. Create context first:**
-
-```tsx
-import { createContext } from "react";
- 
-const defaultValue = { name: "Yegor", isAdmin: true };
-const UserCtx = createContext(defaultValue)
-```
-
-**2. Provide context into react application:**
-
-```tsx
-const App = () => {
-  return (
-    <UserCtx.Provider value={defaultValue}>
-      <h1>This is my app</h1>
-      <AboutUser />
-    </UserCtx.Provider>
-  );
-};
-```
-
-**3. useContext from any functional component:**
-
-```tsx
-const AboutUser = () => {
-  const { name, isAdmin } = useContext(UserCtx);
-  return (
-    <div>
-      UserName: {name}, isAdmin: {isAdmin}
-    </div>
-  );
-};
-```
-
-### useCallback()
-
-useCallback returns the same function unless dependecies is changed.
-
-**For example:**
-
-```tsx
-type WithCallback = { callback: () => void };
- 
-class ExpensiveComponent extends PureComponent<WithCallback> {
-  render() { return <div>Expensive</div>; }
-  componentDidUpdate() { console.log("updated"); }
+.select:focus {
+    outline: 1px solid brown;
 }
 ```
 
-**The issue:**
+- Hard to track unused code.
+
+## CSS Modules
+
+**Almost the same as plain css:**
 
 ```tsx
-const App = () => {
-  const [state, setState] = useState(0);
-  const callback = ()=> {};
-  return (
-    <>
-      <ExpensiveComponent callback={callback} />
-      <button onClick={() => setState(state + 1)}>
-        Increment: {state}
-      </button>
-    </>
-  );
-};
+import styles "./app.module.css";
+const App = () => <div className={styles.root}>My app</div>
 ```
 
-**The solution:**
+But scoped to the certain component.
+
+**Result:**
+
+- No more conflicts with naming.
+- Flat CSS without deep nesting.
+- No more !important.
+- Easy to track not used class.
+
+## Preprocessors
+
+**Pros:**
+
+- Variables
+- Convinient nesting
+```scss
+.radio:disabled { opacity: 0.33; }
+.radio:focus { outline: 1px solid red; }
+.radio {
+    &:disabled { opacity: 0.33; }
+    &:focus { outline: 1px solid red; }
+}
+```
+- Mixins
+```scss
+@mixin theme($theme: white, $txt: black) {
+    background: $theme;
+    color:$txt;
+ }
+ 
+ .card {
+     @include theme;
+ }
+```
+- Math
+```scss
+@use "sass:math";
+article[role="main"] {
+  width: math.div(600px, 960px) * 100%;
+}
+```
+
+**Cons:**
+
+- Extra setup needed.
+- Learning curve.
+- Not compatible with pure css.
+
+## CSS in JS
+
+**Example from styled component:**
 
 ```tsx
-const callback = useCallback(() => {}, []);
+import styled from "@emotion/styled";
+ 
+const AppH1 = styled.h1`
+    color: red;
+`;
 ```
 
-### Custom hooks
+**Pros:**
 
-**Simplify interface and hide the logic inside a hook:**
+- Absolute control - In CSS in JS approach - css is a part of your code. Thus you have full control on it. You can use variables, math, any kind of transformation. You can use props to control any css property.
+- Naming - Within CSS in JS you will not spot naming issues. Class names are unique or not exists at all.
+- Maintenance - As far as CSS turned into the code - it's much easier to track, rename or delete CSS without worrying that something will be broken.
 
-```tsx
-const useCounter = (defaultValue: number) => {
-  const [state, setState] = useState(defaultValue);
-  const increment = useCallback(
-    () => setState(state + 1), 
-    [state]);
-  return { state, increment };
-};
-```
+**Cons:**
 
-**Usage is the same but easier:**
+- Weird syntax.
+- Extra tooling needed.
+- Some perfomance hit.
 
-```tsx
-const App = () => {
-  const { state, increment } = useCounter(0);
-  return (
-      <button onClick={increment}>Increment: {state}</button>
-  );
-};
-```
+### Libraries
 
-## Useful links
+- [Styled Components@5.3.5](https://github.com/styled-components/styled-components) - 36_000 ⭐, 3.5M downloads, 33.5kB
+- [emotion/react@11.9.0](https://github.com/emotion-js/emotion) - 15_000 ⭐, 3M downloads, 21.2kB size
 
-- [Useful react hooks](https://www.smashingmagazine.com/2021/11/useful-react-hooks/)
+## What to pick?
+
+- Pure CSS - naming conflicts 🤔
+- CSS Modules - default ⭐
+- CSS Modules + SCSS - for advanced ⭐ ⭐
+- CSS in JS - in case of very complex UI when you need to control everything programmatically.
+
+## Useful Links
+
+- [CSS modules](https://css-tricks.com/css-modules-part-1-need/)
+- [SASS - CSS with superpowers](https://sass-lang.com/)
+- [How to add SASS to React](https://create-react-app.dev/docs/adding-a-sass-stylesheet/)
+- [Styled Components](https://styled-components.com/docs/basics#getting-started)
+- [Styled Components extension](https://marketplace.visualstudio.com/items?itemName=styled-components.vscode-styled-components)
