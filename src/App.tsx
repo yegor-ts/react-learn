@@ -1,27 +1,22 @@
-import React from "react";
+import Battlefield from "./components/Battlefield";
+import HeaderWithCounter from "./components/HeaderWithCounter";
+import ResetButton from "./components/ResetButton";
+import { useGameState } from "./state/useGameState";
+
 import "./App.css";
 
-import personData from "./person.json";
+const App = () => {
+  const { attempt, clear, matrix, fire, won } = useGameState();
 
-import Header from "./components/Header/index";
-import Bio from "./components/Bio/index";
-import Footer from "./components/Footer/index";
+  if (won) alert("MOSCOW DOWN!");
 
-function App() {
   return (
-    <div className="App">
-      <Header options={["Home", "Feed", "Personal account", "Log out"]} />
-      <Bio
-        name={personData.name}
-        biography={personData.biography}
-        contacts={personData.contacts}
-      />
-      <Footer
-        socials={["instagram", "twitter", "facebook"]}
-        services={["New Feature", "About", "Downloads"]}
-      />
+    <div className="app">
+      <HeaderWithCounter attempt={attempt} />
+      <Battlefield matrix={matrix} onFire={fire} />
+      <ResetButton clear={clear} />
     </div>
   );
-}
+};
 
 export default App;
