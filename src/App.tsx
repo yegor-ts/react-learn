@@ -1,21 +1,18 @@
-import Battlefield from "./components/Battlefield";
-import HeaderWithCounter from "./components/HeaderWithCounter";
-import ResetButton from "./components/ResetButton";
-import { useGameState } from "./state/useGameState";
+import { useState } from "react";
+import Timer from "./components/Timer";
+import { TimerCtx, defaultValue } from "./state/timer";
 
 import styles from "./App.module.css";
 
 const App = () => {
-  const { attempt, clear, matrix, fire, won } = useGameState();
-
-  if (won) alert("MOSCOW DOWN!");
+  const [timer, setTimerData] = useState(defaultValue);
 
   return (
-    <div className={styles.app}>
-      <HeaderWithCounter attempt={attempt} />
-      <Battlefield matrix={matrix} onFire={fire} />
-      <ResetButton clear={clear} />
-    </div>
+    <TimerCtx.Provider value={{ ...timer, setTimerData }}>
+      <div className={styles.app}>
+        <Timer />
+      </div>
+    </TimerCtx.Provider>
   );
 };
 
