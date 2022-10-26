@@ -1,16 +1,25 @@
-import { createContext } from "react";
-
+import { makeAutoObservable } from "mobx";
 interface TimerData {
   timer: number;
   isActive: boolean;
 }
 
-interface TimerState extends TimerData {
-  setTimerData: (data: TimerData) => void;
+const defaultData: TimerData = { timer: 0, isActive: false };
+
+class TimerStore {
+  timer: number;
+  isActive: boolean;
+
+  constructor(values: TimerData) {
+    makeAutoObservable(this);
+    this.timer = values.timer;
+    this.isActive = values.isActive;
+  }
+
+  setTimerData({ timer, isActive }: TimerData) {
+    this.timer = timer;
+    this.isActive = isActive;
+  }
 }
 
-export const defaultValue: TimerData = { timer: 0, isActive: false };
-export const TimerCtx = createContext<TimerState>({
-  ...defaultValue,
-  setTimerData: () => {},
-});
+export const timerStore = new TimerStore(defaultData);

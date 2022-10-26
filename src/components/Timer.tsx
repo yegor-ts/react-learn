@@ -1,24 +1,25 @@
-import { useContext, useEffect } from "react";
-import { TimerCtx } from "../state/timer";
+import { observer } from "mobx-react";
+import { useEffect } from "react";
+import { timerStore } from "../state/timer";
 
 import styles from "./Timer.module.css";
 
-const Timer = () => {
-  const { timer, isActive, setTimerData } = useContext(TimerCtx);
+const Timer = observer(() => {
+  const { timer, isActive } = timerStore;
 
   useEffect(() => {
     let interval: NodeJS.Timer = setInterval(() => {}, 0);
 
     if (isActive) {
       interval = setInterval(() => {
-        setTimerData({ isActive, timer: timer + 1 });
+        timerStore.setTimerData({ isActive, timer: timer + 1 });
       }, 1000);
     } else {
       clearInterval(interval);
     }
 
     return () => clearInterval(interval);
-  }, [isActive, timer, setTimerData]);
+  }, [isActive, timer]);
 
   return (
     <div className={styles.timer}>
@@ -35,26 +36,28 @@ const Timer = () => {
       <div className={styles.buttons}>
         <button
           className={styles.button}
-          onClick={() => setTimerData({ timer: timer + 1, isActive: true })}
+          onClick={() =>
+            timerStore.setTimerData({ timer: timer + 1, isActive: true })
+          }
         >
           Start
         </button>
         <button
           className={styles.button}
-          onClick={() => setTimerData({ timer, isActive: false })}
+          onClick={() => timerStore.setTimerData({ timer, isActive: false })}
         >
           Stop
         </button>
 
         <button
           className={styles.button}
-          onClick={() => setTimerData({ timer: 0, isActive })}
+          onClick={() => timerStore.setTimerData({ timer: 0, isActive })}
         >
           Clear
         </button>
       </div>
     </div>
   );
-};
+});
 
 export default Timer;
